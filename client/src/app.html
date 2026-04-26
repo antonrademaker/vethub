@@ -8,7 +8,15 @@
 		<link rel="icon" type="image/svg+xml" href="/favicon.svg" />
 		<link rel="preconnect" href="https://fonts.googleapis.com" />
 		<link rel="preconnect" href="https://fonts.gstatic.com" crossorigin />
-		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&display=swap" rel="stylesheet" />
+		<link href="https://fonts.googleapis.com/css2?family=Poppins:wght@200;300;400;500;600&family=JetBrains+Mono:wght@300;400;500&family=Press+Start+2P&display=swap" rel="stylesheet" />
+		<script>
+			(function () {
+				var valid = ['light', 'dark', 'forest', 'green', 'pride', 'retro'];
+				var stored;
+				try { stored = localStorage.getItem('vethub-theme'); } catch (e) {}
+				document.documentElement.setAttribute('data-theme', valid.indexOf(stored) !== -1 ? stored : 'light');
+			})();
+		</script>
 		%sveltekit.head%
 	</head>
 	<body data-sveltekit-preload-data="hover">

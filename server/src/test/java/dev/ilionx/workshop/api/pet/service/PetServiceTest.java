@@ -9,6 +9,7 @@ import dev.ilionx.workshop.api.pet.model.request.UpdatePetRequest;
 import dev.ilionx.workshop.api.pet.repository.PetRepository;
 import dev.ilionx.workshop.api.pet.repository.PetTypeRepository;
 import dev.ilionx.workshop.support.UnitTest;
+import io.github.jframe.exception.core.BadRequestException;
 import io.github.jframe.exception.core.DataNotFoundException;
 
 import java.time.LocalDate;
@@ -338,6 +339,67 @@ class PetServiceTest extends UnitTest {
         );
 
         assertThat(exception.getMessage(), is(equalTo("The requested pet does not exist.")));
+    }
+
+    // ========================= FIND ALL BY NAME =========================
+
+    @Test
+    @DisplayName("Should call findAll when name is null")
+    void shouldCallFindAllWhenNameIsNull() {
+        // Given: No name filter is provided (null)
+        final List<Pet> expectedPets = List.of(aValidPet());
+        given(petRepository.findAll()).willReturn(expectedPets);
+
+        // When: Finding all pets with a null name
+        final List<Pet> actualPets = petService.findAll(null);
+
+        // Then: findAll is called and all pets are returned
+        verify(petRepository).findAll();
+        assertThat(actualPets, hasSize(1));
+    }
+
+    @Test
+    @DisplayName("Should call findAll when name is blank")
+    void shouldCallFindAllWhenNameIsBlank() {
+        // Given: An empty string name filter is provided
+        final List<Pet> expectedPets = List.of(aValidPet());
+        given(petRepository.findAll()).willReturn(expectedPets);
+
+        // When: Finding all pets with a blank name
+        final List<Pet> actualPets = petService.findAll("   ");
+
+        // Then: findAll is called and all pets are returned
+        verify(petRepository).findAll();
+        assertThat(actualPets, hasSize(1));
+    }
+
+    @Test
+    @DisplayName("Should call findByNameContainingIgnoreCase when name is provided")
+    void shouldCallFindByNameContainingIgnoreCaseWhenNameIsProvided() {
+        // Given: A non-blank name filter is provided
+        final Pet leo = aValidPet();
+        given(petRepository.findByNameContainingIgnoreCase("leo")).willReturn(List.of(leo));
+
+        // When: Finding all pets with name "leo"
+        final List<Pet> actualPets = petService.findAll("leo");
+
+        // Then: findByNameContainingIgnoreCase is called with the given name
+        verify(petRepository).findByNameContainingIgnoreCase("leo");
+        assertThat(actualPets, hasSize(1));
+        assertThat(actualPets.get(0).getName(), is(equalTo(VALID_PET_NAME)));
+    }
+
+    @Test
+    @DisplayName("Should throw exception when name exceeds max length")
+    void shouldThrowExceptionWhenNameExceedsMaxLength() {
+        // Given: A name longer than 255 characters
+        final String tooLongName = "a".repeat(256);
+
+        // When & Then: Finding pets with a name that is too long should throw BadRequestException
+        assertThrows(
+            BadRequestException.class,
+            () -> petService.findAll(tooLongName)
+        );
     }
 
 }

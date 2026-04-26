@@ -8,6 +8,7 @@ import dev.ilionx.workshop.api.pet.model.request.CreatePetRequest;
 import dev.ilionx.workshop.api.pet.model.request.UpdatePetRequest;
 import dev.ilionx.workshop.api.pet.repository.PetRepository;
 import dev.ilionx.workshop.api.pet.repository.PetTypeRepository;
+import io.github.jframe.exception.core.BadRequestException;
 import io.github.jframe.exception.core.DataNotFoundException;
 import lombok.RequiredArgsConstructor;
 
@@ -17,6 +18,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static dev.ilionx.workshop.common.exception.ApiErrorCode.OWNER_NOT_FOUND;
+import static dev.ilionx.workshop.common.exception.ApiErrorCode.PET_NAME_TOO_LONG;
 import static dev.ilionx.workshop.common.exception.ApiErrorCode.PET_NOT_FOUND;
 import static dev.ilionx.workshop.common.exception.ApiErrorCode.PET_TYPE_NOT_FOUND;
 
@@ -113,6 +115,27 @@ public class PetService {
         pet.setType(petType);
 
         return petRepository.save(pet);
+    }
+
+    /**
+     * Retrieves all pets in the system, optionally filtered by name.
+     *
+     * <p>If {@code name} is {@code null} or blank, all pets are returned.
+     * Otherwise, a case-insensitive partial match on the pet name is applied.
+     *
+     * @param name optional name fragment to filter by; {@code null} or blank returns all pets
+     * @return list of matching pets
+     * @throws BadRequestException if {@code name} exceeds 255 characters
+     */
+    @Transactional(readOnly = true)
+    public List<Pet> findAll(final String name) {
+        if (name != null && name.length() > 255) {
+            throw new BadRequestException(PET_NAME_TOO_LONG.getReason());
+        }
+        if (name == null || name.isBlank()) {
+            return petRepository.findAll();
+        }
+        return petRepository.findByNameContainingIgnoreCase(name);
     }
 
     /**

@@ -41,6 +41,10 @@ public enum ApiErrorCode implements ApiError {
     VISIT_NOT_FOUND(
         "ERR-0007",
         "The requested visit does not exist."
+    ),
+    PET_NAME_TOO_LONG(
+        "ERR-0008",
+        "The pet name must not exceed 255 characters."
     );
 
     /* The error code for this reason. */

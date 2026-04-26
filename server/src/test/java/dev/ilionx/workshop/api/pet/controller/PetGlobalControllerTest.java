@@ -2,6 +2,7 @@ package dev.ilionx.workshop.api.pet.controller;
 
 import dev.ilionx.workshop.api.owner.model.Owner;
 import dev.ilionx.workshop.api.pet.model.Pet;
+import dev.ilionx.workshop.api.pet.model.PetType;
 import dev.ilionx.workshop.api.pet.model.request.CreatePetRequest;
 import dev.ilionx.workshop.api.pet.model.request.UpdatePetRequest;
 import dev.ilionx.workshop.api.pet.model.response.PetResponse;
@@ -229,5 +230,107 @@ class PetGlobalControllerTest extends IntegrationTest {
         final String content = response.andReturn().getResponse().getContentAsString();
         final ErrorResponseResource error = fromJson(content, ErrorResponseResource.class);
         assertThat(error.getErrorMessage(), is(equalTo(PET_NOT_FOUND.getReason())));
+    }
+
+    // ========================= SEARCH BY NAME =========================
+
+    @Test
+    @DisplayName("Should return all pets when no name filter given")
+    void shouldReturnAllPetsWhenNoNameFilterGiven() throws Exception {
+        // Given: Two pets exist in the database
+        final Owner owner = aSavedOwner();
+        aSavedPet(owner);
+        final PetType petType = petTypeRepository.findById(1)
+            .orElseThrow();
+        final Pet max = new Pet();
+        max.setName("Max");
+        max.setBirthDate(LocalDate.of(2021, 1, 1));
+        max.setType(petType);
+        max.setOwner(owner);
+        petRepository.save(max);
+
+        // When: Requesting all pets without a name filter
+        // Then: Both pets are returned
+        mockMvc.perform(get(PETS))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(2)));
+    }
+
+    @Test
+    @DisplayName("Should return matching pets when name filter given")
+    void shouldReturnMatchingPetsWhenNameFilterGiven() throws Exception {
+        // Given: Two pets exist — "Leo" and "Max"
+        final Owner owner = aSavedOwner();
+        aSavedPet(owner);
+        final PetType petType = petTypeRepository.findById(1)
+            .orElseThrow();
+        final Pet max = new Pet();
+        max.setName("Max");
+        max.setBirthDate(LocalDate.of(2021, 1, 1));
+        max.setType(petType);
+        max.setOwner(owner);
+        petRepository.save(max);
+
+        // When: Filtering by name "leo"
+        // Then: Only Leo is returned
+        mockMvc.perform(get(PETS).param("name", "leo"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].name", is(equalTo(PET_NAME))));
+    }
+
+    @Test
+    @DisplayName("Should return empty list when no match found")
+    void shouldReturnEmptyListWhenNoMatchFound() throws Exception {
+        // Given: One pet "Leo" exists
+        final Owner owner = aSavedOwner();
+        aSavedPet(owner);
+
+        // When: Filtering by a name that matches nothing
+        // Then: 200 OK with empty array
+        mockMvc.perform(get(PETS).param("name", "zzznomatch"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(0)));
+    }
+
+    @Test
+    @DisplayName("Should match pet name case insensitively")
+    void shouldMatchPetNameCaseInsensitively() throws Exception {
+        // Given: A pet named "Leo" exists
+        final Owner owner = aSavedOwner();
+        aSavedPet(owner);
+
+        // When: Filtering with uppercase "LEO"
+        // Then: Leo is returned
+        mockMvc.perform(get(PETS).param("name", "LEO"))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].name", is(equalTo(PET_NAME))));
+    }
+
+    @Test
+    @DisplayName("Should return all pets when name is empty string")
+    void shouldReturnAllPetsWhenNameIsEmptyString() throws Exception {
+        // Given: One pet exists
+        final Owner owner = aSavedOwner();
+        aSavedPet(owner);
+
+        // When: Filtering with an empty string name
+        // Then: All pets are returned
+        mockMvc.perform(get(PETS).param("name", ""))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)));
+    }
+
+    @Test
+    @DisplayName("Should return 400 when name exceeds max length")
+    void shouldReturn400WhenNameExceedsMaxLength() throws Exception {
+        // Given: A name parameter of 256 characters
+        final String tooLongName = "a".repeat(256);
+
+        // When: Requesting with an over-length name
+        // Then: 400 Bad Request is returned
+        mockMvc.perform(get(PETS).param("name", tooLongName))
+            .andExpect(status().isBadRequest());
     }
 }

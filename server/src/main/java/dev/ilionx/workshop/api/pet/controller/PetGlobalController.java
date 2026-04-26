@@ -45,8 +45,10 @@ public class PetGlobalController {
         path = PETS,
         produces = APPLICATION_JSON_VALUE
     )
-    public ResponseEntity<List<PetResponse>> getAllPets() {
-        final List<Pet> pets = petService.findAll();
+    public ResponseEntity<List<PetResponse>> getAllPets(
+        @RequestParam(required = false) final String name
+    ) {
+        final List<Pet> pets = petService.findAll(name);
         return ResponseEntity.status(OK).body(petMapper.toResponseList(pets));
     }
 

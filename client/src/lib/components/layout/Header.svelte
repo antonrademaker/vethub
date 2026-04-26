@@ -2,6 +2,7 @@
 	import { page } from '$app/stores';
 	import { Users, Stethoscope, Calendar, Home, Menu, X, PawPrint } from 'lucide-svelte';
 	import { Button } from '$lib/components/ui/button';
+	import ThemePicker from './ThemePicker.svelte';
 
 	let mobileMenuOpen = $state(false);
 
@@ -49,41 +50,49 @@
 				{/each}
 			</nav>
 
-			<!-- Mobile Menu Button -->
-			<Button
-				variant="ghost"
-				size="icon"
-				class="md:hidden"
-				onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
-				aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
-			>
-				{#if mobileMenuOpen}
-					<X class="h-5 w-5" />
-				{:else}
-					<Menu class="h-5 w-5" />
-				{/if}
-			</Button>
+			<!-- Theme Picker (desktop) + Mobile Menu Button -->
+			<div class="flex items-center gap-1">
+				<ThemePicker />
+				<Button
+					variant="ghost"
+					size="icon"
+					class="md:hidden"
+					onclick={() => (mobileMenuOpen = !mobileMenuOpen)}
+					aria-label={mobileMenuOpen ? 'Close menu' : 'Open menu'}
+				>
+					{#if mobileMenuOpen}
+						<X class="h-5 w-5" />
+					{:else}
+						<Menu class="h-5 w-5" />
+					{/if}
+				</Button>
+			</div>
 		</div>
 
-		<!-- Mobile Navigation -->
-		{#if mobileMenuOpen}
-			<nav class="border-t border-border py-4 md:hidden">
-				<div class="flex flex-col gap-1">
-					{#each navItems as item (item.href)}
-						<a
-							href={item.href}
-							onclick={closeMobileMenu}
-							class="flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition-colors
-								{isActive(item.href)
-									? 'bg-primary/10 text-primary'
-									: 'text-muted-foreground hover:bg-muted hover:text-foreground'}"
-						>
-							<item.icon class="h-5 w-5" />
-							{item.label}
-						</a>
-					{/each}
-				</div>
-			</nav>
-		{/if}
+	<!-- Mobile Navigation -->
+	{#if mobileMenuOpen}
+		<nav class="border-t border-border py-4 md:hidden">
+			<!-- Theme picker row -->
+			<div class="mb-3 flex items-center gap-3 px-3">
+				<span class="text-sm font-medium text-muted-foreground">Theme</span>
+				<ThemePicker />
+			</div>
+			<div class="flex flex-col gap-1">
+				{#each navItems as item (item.href)}
+					<a
+						href={item.href}
+						onclick={closeMobileMenu}
+						class="flex items-center gap-3 rounded-md px-3 py-3 text-sm font-medium transition-colors
+							{isActive(item.href)
+								? 'bg-primary/10 text-primary'
+								: 'text-muted-foreground hover:bg-muted hover:text-foreground'}"
+					>
+						<item.icon class="h-5 w-5" />
+						{item.label}
+					</a>
+				{/each}
+			</div>
+		</nav>
+	{/if}
 	</div>
 </header>

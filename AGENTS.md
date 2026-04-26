@@ -4,6 +4,17 @@
 
 Demo veterinary clinic app: Spring Boot REST API (`server/`) + SvelteKit frontend (`client/`). Two co-located apps, not a monorepo with shared packages.
 
+## Story Workflow
+
+If the user specifies a story located in `.opencode/refined/`, treat that story file as the source of truth for scope and acceptance criteria.
+
+When the requested story has been implemented, validated with the appropriate project checks, and explicitly accepted by the user:
+
+1. Move the story file from `.opencode/refined/` to `.opencode/completed/`.
+2. Add a corresponding entry to `.opencode/CHANGELOG.md` with the date, feature title, and a short summary of what was delivered.
+
+Do not move the story or update the changelog before the user has accepted the completed work.
+
 ## Tool Versions (managed by `mise`)
 
 ```
