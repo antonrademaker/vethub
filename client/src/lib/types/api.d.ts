@@ -522,6 +522,39 @@ export interface components {
             traceId?: string;
             spanId?: string;
         };
+        MethodArgumentNotValidResponseResource: {
+            method?: string;
+            uri?: string;
+            query?: string;
+            contentType?: string;
+            /** Format: int32 */
+            statusCode?: number;
+            statusMessage?: string;
+            errorMessage?: string;
+            txId?: string;
+            traceId?: string;
+            spanId?: string;
+            errors?: components["schemas"]["ValidationErrorResource"][];
+        };
+        ValidationErrorResource: {
+            code?: string;
+            field?: string;
+        };
+        ApiErrorResponseResource: {
+            method?: string;
+            uri?: string;
+            query?: string;
+            contentType?: string;
+            /** Format: int32 */
+            statusCode?: number;
+            statusMessage?: string;
+            errorMessage?: string;
+            txId?: string;
+            traceId?: string;
+            spanId?: string;
+            apiErrorCode?: string;
+            apiErrorReason?: string;
+        };
         RateLimitErrorResponseResource: {
             method?: string;
             uri?: string;
@@ -541,39 +574,6 @@ export interface components {
             /** Format: date-time */
             resetDate?: string;
         };
-        ValidationErrorResource: {
-            code?: string;
-            field?: string;
-        };
-        ValidationErrorResponseResource: {
-            method?: string;
-            uri?: string;
-            query?: string;
-            contentType?: string;
-            /** Format: int32 */
-            statusCode?: number;
-            statusMessage?: string;
-            errorMessage?: string;
-            txId?: string;
-            traceId?: string;
-            spanId?: string;
-            errors?: components["schemas"]["ValidationErrorResource"][];
-        };
-        ApiErrorResponseResource: {
-            method?: string;
-            uri?: string;
-            query?: string;
-            contentType?: string;
-            /** Format: int32 */
-            statusCode?: number;
-            statusMessage?: string;
-            errorMessage?: string;
-            txId?: string;
-            traceId?: string;
-            spanId?: string;
-            apiErrorCode?: string;
-            apiErrorReason?: string;
-        };
         /** @description Request to update an existing visit */
         UpdateVisitRequest: {
             /**
@@ -587,6 +587,12 @@ export interface components {
              * @example Follow-up checkup
              */
             description: string;
+            /**
+             * Format: int32
+             * @description ID of the vet who performed the visit
+             * @example 1
+             */
+            vetId?: number;
         };
         /** @description Response containing visit details */
         VisitResponse: {
@@ -613,6 +619,17 @@ export interface components {
              * @example 1
              */
             petId: number;
+            /**
+             * Format: int32
+             * @description The vet's unique identifier
+             * @example 1
+             */
+            vetId?: number;
+            /**
+             * @description The vet's full name
+             * @example James Carter
+             */
+            vetName?: string;
         };
         /** @description Request to update an existing vet */
         UpdateVetRequest: {
@@ -878,6 +895,12 @@ export interface components {
              * @example 1
              */
             petId?: number;
+            /**
+             * Format: int32
+             * @description ID of the vet who performed the visit
+             * @example 1
+             */
+            vetId?: number;
         };
         /** @description Request to create a new vet */
         CreateVetRequest: {
@@ -1048,22 +1071,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -1073,6 +1087,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -1146,22 +1169,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -1171,6 +1185,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -1238,22 +1261,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -1263,6 +1277,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -1332,22 +1355,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -1357,6 +1371,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -1430,22 +1453,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -1455,6 +1469,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -1522,22 +1545,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -1547,6 +1561,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -1616,22 +1639,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -1641,6 +1655,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -1714,22 +1737,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -1739,6 +1753,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -1806,22 +1829,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -1831,6 +1845,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -1900,22 +1923,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -1925,6 +1939,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -1998,22 +2021,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -2023,6 +2037,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -2090,22 +2113,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -2115,6 +2129,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -2184,22 +2207,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -2209,6 +2223,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -2282,22 +2305,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -2307,6 +2321,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -2374,22 +2397,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -2399,6 +2413,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -2469,22 +2492,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -2494,6 +2508,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -2568,22 +2591,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -2593,6 +2607,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -2661,22 +2684,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -2686,6 +2700,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -2757,22 +2780,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -2782,6 +2796,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -2857,22 +2880,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -2882,6 +2896,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -2951,22 +2974,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -2976,6 +2990,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -3045,22 +3068,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -3070,6 +3084,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -3143,22 +3166,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -3168,6 +3182,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -3235,22 +3258,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -3260,6 +3274,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -3327,22 +3350,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -3352,6 +3366,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -3423,22 +3446,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -3448,6 +3462,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -3515,22 +3538,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -3540,6 +3554,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -3611,22 +3634,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -3636,6 +3650,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -3703,22 +3726,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -3728,6 +3742,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -3799,22 +3822,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -3826,11 +3840,22 @@ export interface operations {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
                 };
             };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
+                };
+            };
         };
     };
     getAllPets: {
         parameters: {
-            query?: never;
+            query?: {
+                name?: string;
+            };
             header?: never;
             path?: never;
             cookie?: never;
@@ -3891,22 +3916,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -3916,6 +3932,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -3987,22 +4012,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -4012,6 +4028,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -4079,22 +4104,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -4104,6 +4120,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -4175,22 +4200,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -4200,6 +4216,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -4269,22 +4294,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -4294,6 +4310,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -4365,22 +4390,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -4390,6 +4406,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -4459,22 +4484,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -4484,6 +4500,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -4557,22 +4582,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -4582,6 +4598,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -4652,22 +4677,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -4677,6 +4693,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -4751,22 +4776,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -4776,6 +4792,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -4857,22 +4882,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -4882,6 +4898,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -4951,22 +4976,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -4976,6 +4992,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -5047,22 +5072,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -5072,6 +5088,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -5141,22 +5166,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -5166,6 +5182,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };
@@ -5235,22 +5260,13 @@ export interface operations {
                     "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
-            /** @description Default HTTP Exception */
-            "400 (default)": {
-                headers: {
-                    [name: string]: unknown;
-                };
-                content: {
-                    "application/json": components["schemas"]["ErrorResponseResource"];
-                };
-            };
             /** @description Input Validation Exception */
             "400 (Validation)": {
                 headers: {
                     [name: string]: unknown;
                 };
                 content: {
-                    "application/json": components["schemas"]["ValidationErrorResponseResource"];
+                    "application/json": components["schemas"]["MethodArgumentNotValidResponseResource"];
                 };
             };
             /** @description API Exception */
@@ -5260,6 +5276,15 @@ export interface operations {
                 };
                 content: {
                     "application/json": components["schemas"]["ApiErrorResponseResource"];
+                };
+            };
+            /** @description Default HTTP Exception */
+            "400 (default)": {
+                headers: {
+                    [name: string]: unknown;
+                };
+                content: {
+                    "application/json": components["schemas"]["ErrorResponseResource"];
                 };
             };
         };

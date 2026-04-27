@@ -37,3 +37,7 @@ server/**config/*.local.properties
 /server/.settings/org.eclipse.buildship.core.prefsc
 
 /.opencode/
+
+/.playwright-mcp/
+client/dev.log
+server/bootrun.log

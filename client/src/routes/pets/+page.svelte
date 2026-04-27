@@ -4,7 +4,7 @@
 	import { Button } from '$lib/components/ui/button';
 	import { Input } from '$lib/components/ui/input';
 	import * as Table from '$lib/components/ui/table';
-	import { PawPrint, Search } from 'lucide-svelte';
+	import { PawPrint, Search, ExternalLink } from 'lucide-svelte';
 	import { toast } from 'svelte-sonner';
 
 	let pets = $state<PetResponse[]>([]);
@@ -133,15 +133,11 @@
 							</Table.Cell>
 							<Table.Cell>{pet.type?.name ?? '—'}</Table.Cell>
 							<Table.Cell>{pet.birthDate ?? '—'}</Table.Cell>
-							<Table.Cell>
-								{#if pet.ownerId}
-									<Button variant="ghost" size="sm" href="/owners/{pet.ownerId}/pets/{pet.id}">
-										View
-									</Button>
-								{:else}
-									<span class="text-sm text-muted-foreground">—</span>
-								{/if}
-							</Table.Cell>
+						<Table.Cell>
+							<Button variant="ghost" size="sm" href="/pets/{pet.id}" title="View pet detail">
+								<ExternalLink class="h-4 w-4" />
+							</Button>
+						</Table.Cell>
 						</Table.Row>
 					{/each}
 				</Table.Body>
