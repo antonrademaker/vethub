@@ -2,6 +2,7 @@ package dev.ilionx.workshop.api.visit.controller;
 
 import dev.ilionx.workshop.api.owner.model.Owner;
 import dev.ilionx.workshop.api.pet.model.Pet;
+import dev.ilionx.workshop.api.vet.model.Vet;
 import dev.ilionx.workshop.api.visit.model.Visit;
 import dev.ilionx.workshop.api.visit.model.request.CreateVisitRequest;
 import dev.ilionx.workshop.api.visit.model.request.UpdateVisitRequest;
@@ -19,6 +20,7 @@ import org.springframework.test.web.servlet.ResultActions;
 import static dev.ilionx.workshop.api.Paths.VISITS;
 import static dev.ilionx.workshop.api.Paths.VISIT_BY_ID;
 import static dev.ilionx.workshop.common.exception.ApiErrorCode.PET_NOT_FOUND;
+import static dev.ilionx.workshop.common.exception.ApiErrorCode.VET_NOT_FOUND;
 import static dev.ilionx.workshop.common.exception.ApiErrorCode.VISIT_NOT_FOUND;
 import static io.github.jframe.util.mapper.ObjectMappers.fromJson;
 import static io.github.jframe.util.mapper.ObjectMappers.toJson;
@@ -33,6 +35,11 @@ class VisitGlobalControllerTest extends IntegrationTest {
 
     private static final int NON_EXISTENT_VISIT_ID = 999;
     private static final int NON_EXISTENT_PET_ID = 999;
+    private static final int NON_EXISTENT_VET_ID = 999;
+    private static final int SEED_VET_ID = 1;
+    private static final String SEED_VET_FIRST_NAME = "James";
+    private static final String SEED_VET_LAST_NAME = "Carter";
+    private static final String SEED_VET_FULL_NAME = "James Carter";
 
     private static final String VISIT_DESCRIPTION = "Rabies shot";
     private static final LocalDate VISIT_DATE = LocalDate.of(2023, 1, 1);
@@ -235,5 +242,149 @@ class VisitGlobalControllerTest extends IntegrationTest {
         final String content = response.andReturn().getResponse().getContentAsString();
         final ErrorResponseResource error = fromJson(content, ErrorResponseResource.class);
         assertThat(error.getErrorMessage(), is(equalTo(VISIT_NOT_FOUND.getReason())));
+    }
+
+    // ========================= VET ON VISIT =========================
+
+    @Test
+    @DisplayName("Should return vet name when visit created with vetId")
+    void shouldReturnVetNameWhenVisitCreatedWithVetId() throws Exception {
+        // Given: An owner with a pet exists, and a valid create visit request with a seed vetId
+        final Owner owner = aSavedOwner();
+        final Pet pet = aSavedPet(owner);
+        final CreateVisitRequest request = aCreateVisitRequestWithPet(pet.getId());
+        request.setVetId(SEED_VET_ID);
+
+        // When: Creating the visit with a vetId
+        final String responseBody = mockMvc.perform(
+            post(VISITS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(request))
+        )
+            // Then: Should return 201 with vetId and vetName populated
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.vetId", is(equalTo(SEED_VET_ID))))
+            .andExpect(jsonPath("$.vetName", is(equalTo(SEED_VET_FULL_NAME))))
+            .andReturn()
+            .getResponse()
+            .getContentAsString();
+
+        // And: The returned visit should carry vet info
+        final VisitResponse visitResponse = fromJson(responseBody, VisitResponse.class);
+        assertThat(visitResponse.getVetId(), is(equalTo(SEED_VET_ID)));
+        assertThat(visitResponse.getVetName(), is(equalTo(SEED_VET_FULL_NAME)));
+    }
+
+    @Test
+    @DisplayName("Should accept visit without vetId and return null vet fields")
+    void shouldAcceptVisitWithoutVetIdAndReturnNullVetFields() throws Exception {
+        // Given: An owner with a pet exists, and a create visit request without a vetId
+        final Owner owner = aSavedOwner();
+        final Pet pet = aSavedPet(owner);
+        final CreateVisitRequest request = aCreateVisitRequestWithPet(pet.getId());
+
+        // When: Creating the visit without a vetId
+        // Then: Should return 201 with vetId and vetName as null
+        mockMvc.perform(
+            post(VISITS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(request))
+        )
+            .andExpect(status().isCreated())
+            .andExpect(jsonPath("$.vetId").doesNotExist())
+            .andExpect(jsonPath("$.vetName").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("Should return 404 when vetId does not exist for create visit")
+    void shouldReturn404WhenVetIdDoesNotExistForCreateVisit() throws Exception {
+        // Given: A create visit request with a non-existent vetId
+        final Owner owner = aSavedOwner();
+        final Pet pet = aSavedPet(owner);
+        final CreateVisitRequest request = aCreateVisitRequestWithPet(pet.getId());
+        request.setVetId(NON_EXISTENT_VET_ID);
+
+        // When: Creating a visit with a non-existent vetId
+        final ResultActions response = mockMvc.perform(
+            post(VISITS)
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(request))
+        );
+
+        // Then: Should return 404 with vet not found error
+        response.andExpect(status().isNotFound());
+
+        final String content = response.andReturn().getResponse().getContentAsString();
+        final ErrorResponseResource error = fromJson(content, ErrorResponseResource.class);
+        assertThat(error.getErrorMessage(), is(equalTo(VET_NOT_FOUND.getReason())));
+    }
+
+    @Test
+    @DisplayName("Should update vet when vetId provided on update")
+    void shouldUpdateVetWhenVetIdProvidedOnUpdate() throws Exception {
+        // Given: An existing visit without a vet, and an update request with a seed vetId
+        final Owner owner = aSavedOwner();
+        final Pet pet = aSavedPet(owner);
+        final Visit visit = aSavedVisit(pet);
+        final UpdateVisitRequest request = anUpdateVisitRequest();
+        request.setVetId(SEED_VET_ID);
+
+        // When: Updating the visit with a vetId
+        // Then: Should return 200 with vetId and vetName populated
+        mockMvc.perform(
+            put(VISIT_BY_ID, visit.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(request))
+        )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.vetId", is(equalTo(SEED_VET_ID))))
+            .andExpect(jsonPath("$.vetName", is(equalTo(SEED_VET_FULL_NAME))));
+    }
+
+    @Test
+    @DisplayName("Should clear vet when vetId is null on update")
+    void shouldClearVetWhenVetIdIsNullOnUpdate() throws Exception {
+        // Given: An existing visit that has a vet assigned
+        final Owner owner = aSavedOwner();
+        final Pet pet = aSavedPet(owner);
+        final Vet vet = vetRepository.findById(SEED_VET_ID).orElseThrow();
+        final Visit visit = aSavedVisit(pet);
+        visit.setVet(vet);
+        visitRepository.save(visit);
+
+        // And: An update request with vetId explicitly null
+        final UpdateVisitRequest request = anUpdateVisitRequest();
+        request.setVetId(null);
+
+        // When: Updating the visit
+        // Then: vetId and vetName should be absent from the response
+        mockMvc.perform(
+            put(VISIT_BY_ID, visit.getId())
+                .contentType(MediaType.APPLICATION_JSON)
+                .content(toJson(request))
+        )
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$.vetId").doesNotExist())
+            .andExpect(jsonPath("$.vetName").doesNotExist());
+    }
+
+    @Test
+    @DisplayName("Should return vetId and vetName on GET all visits")
+    void shouldReturnVetIdAndVetNameOnGetAllVisits() throws Exception {
+        // Given: A visit with a vet assigned exists
+        final Owner owner = aSavedOwner();
+        final Pet pet = aSavedPet(owner);
+        final Vet vet = vetRepository.findById(SEED_VET_ID).orElseThrow();
+        final Visit visit = aSavedVisit(pet);
+        visit.setVet(vet);
+        visitRepository.save(visit);
+
+        // When: Getting all visits
+        // Then: The visit should include vetId and vetName
+        mockMvc.perform(get(VISITS))
+            .andExpect(status().isOk())
+            .andExpect(jsonPath("$", hasSize(1)))
+            .andExpect(jsonPath("$[0].vetId", is(equalTo(SEED_VET_ID))))
+            .andExpect(jsonPath("$[0].vetName", is(equalTo(SEED_VET_FULL_NAME))));
     }
 }

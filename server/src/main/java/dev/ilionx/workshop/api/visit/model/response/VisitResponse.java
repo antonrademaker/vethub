@@ -45,4 +45,18 @@ public class VisitResponse {
         requiredMode = Schema.RequiredMode.REQUIRED
     )
     private Integer petId;
+
+    @Schema(
+        description = "The vet's unique identifier",
+        example = "1",
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED
+    )
+    private Integer vetId;
+
+    @Schema(
+        description = "The vet's full name",
+        example = "James Carter",
+        requiredMode = Schema.RequiredMode.NOT_REQUIRED
+    )
+    private String vetName;
 }

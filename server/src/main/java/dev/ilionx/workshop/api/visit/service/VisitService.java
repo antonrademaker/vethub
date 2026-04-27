@@ -2,6 +2,8 @@ package dev.ilionx.workshop.api.visit.service;
 
 import dev.ilionx.workshop.api.pet.model.Pet;
 import dev.ilionx.workshop.api.pet.repository.PetRepository;
+import dev.ilionx.workshop.api.vet.model.Vet;
+import dev.ilionx.workshop.api.vet.repository.VetRepository;
 import dev.ilionx.workshop.api.visit.model.Visit;
 import dev.ilionx.workshop.api.visit.model.request.CreateVisitRequest;
 import dev.ilionx.workshop.api.visit.model.request.UpdateVisitRequest;
@@ -15,6 +17,7 @@ import org.springframework.stereotype.Service;
 import org.springframework.transaction.annotation.Transactional;
 
 import static dev.ilionx.workshop.common.exception.ApiErrorCode.PET_NOT_FOUND;
+import static dev.ilionx.workshop.common.exception.ApiErrorCode.VET_NOT_FOUND;
 import static dev.ilionx.workshop.common.exception.ApiErrorCode.VISIT_NOT_FOUND;
 
 /**
@@ -26,6 +29,7 @@ public class VisitService {
 
     private final PetRepository petRepository;
     private final VisitRepository visitRepository;
+    private final VetRepository vetRepository;
 
     /**
      * Finds all visits for a specific pet.
@@ -56,6 +60,12 @@ public class VisitService {
         visit.setDate(request.getDate());
         visit.setDescription(request.getDescription());
         visit.setPet(pet);
+
+        if (request.getVetId() != null) {
+            final Vet vet = vetRepository.findById(request.getVetId())
+                .orElseThrow(() -> new DataNotFoundException(VET_NOT_FOUND));
+            visit.setVet(vet);
+        }
 
         return visitRepository.save(visit);
     }
@@ -94,6 +104,15 @@ public class VisitService {
         final Visit visit = findById(visitId);
         visit.setDate(request.getDate());
         visit.setDescription(request.getDescription());
+
+        if (request.getVetId() != null) {
+            final Vet vet = vetRepository.findById(request.getVetId())
+                .orElseThrow(() -> new DataNotFoundException(VET_NOT_FOUND));
+            visit.setVet(vet);
+        } else {
+            visit.setVet(null);
+        }
+
         return visitRepository.save(visit);
     }
 
